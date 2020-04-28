@@ -70,7 +70,7 @@ function waitForDeviceOnline {
     local timeout=30
     while [ $timeout -gt 0 ]
     do
-        if adb shell ls /system > /dev/null 2>&1; then
+        if adb shell su -c ls  > /dev/null 2>&1; then
             echo "<< device is online"
             break
         fi
@@ -90,7 +90,6 @@ function checkRootState {
     waitForDeviceOnline
     SECURE_PROP=$(adb shell getprop ro.secure)
     DEBUG_PROP=$(adb shell getprop ro.debuggable)
-
     $CHECK_SU
     local ret=$?
     if [ $ret == 0 ]; then
@@ -144,14 +143,14 @@ function copyTargetFilesTemplate {
 #################################################################################################
 function updateSystemPartitionSize {
     echo ">> get system partition size ..."
-    SYSTEM_MOUNT_POINT=$(adb shell mount | grep "/cache" | awk 'BEGIN{FS="/cache"}{print $1}')/system
+    SYSTEM_MOUNT_POINT=$(adb shell su -c mount | grep "/cache" | awk 'BEGIN{FS="/cache"}{print $1}')/system
     if [ "$ROOT_STATE" = "system_root" ];then
         SYSTEM_SOFT_MOUNT_POINT=$(adb shell su -c ls -l $SYSTEM_MOUNT_POINT | awk -F '/dev' '{print $2}' |awk -F '/' '{print $NF}')
     else
         waitForDeviceOnline
         SYSTEM_SOFT_MOUNT_POINT=$(adb shell ls -l $SYSTEM_MOUNT_POINT | awk -F '/dev' '{print $2}' |awk -F '/' '{print $NF}')
     fi
-    SYSTEM_PARTITION_SIZE=$(adb shell cat proc/partitions | grep $SYSTEM_SOFT_MOUNT_POINT | awk 'BEGIN{FS=" "}{print $3}')
+    SYSTEM_PARTITION_SIZE=$(adb shell su -c cat proc/partitions | grep $SYSTEM_SOFT_MOUNT_POINT | awk 'BEGIN{FS=" "}{print $3}')
     if [ x"$SYSTEM_PARTITION_SIZE" = x ] || [ -z "$(echo $SYSTEM_PARTITION_SIZE | sed -n "/^[0-9]\+$/p")" ]; then
         echo "system partition size get error!"
         return;
@@ -338,7 +337,9 @@ function pullSpecialSelabelFile {
 # build the SYSTEM dir under target_files
 function buildSystemDir {
     echo ">> retrieve whole /system from device (time-costly, be patient) ..."
-    adb pull /system $SYSTEM_DIR 2>&1 | tee $OUT_DIR/system-pull.log
+    adb shell su -c cp -r /system /sdcard/system 2>&1
+    adb pull /sdcard/system $SYSTEM_DIR 2>&1 | tee $OUT_DIR/system-pull.log 2>&1
+    adb shell rm -rf /sdcard/system 
     pullSpecialSelabelFile
     find $SYSTEM_DIR -name su | xargs rm -f
     find $SYSTEM_DIR -name .suv | xargs rm -f
