@@ -8,24 +8,15 @@ BOARD_PREBUILT += $(BOARD_PREBUILT_DEFAULT)
 
 # define the apk and jars which need modify the res id
 BOARD_MODIFY_RESID_FILES := \
-    app/ConnectivitySettings/ConnectivitySettings.apk \
-    app/MzBlockService/MzBlockService.apk \
-    app/MzSimContacts/MzSimContacts.apk \
-    framework/flyme-framework.jar \
-    framework/flyme-telephony-common.jar \
-    priv-app/Contacts/Contacts.apk \
     priv-app/ContactsProvider/ContactsProvider.apk \
     priv-app/Dialer/Dialer.apk \
     priv-app/DownloadProvider/DownloadProvider.apk \
-    priv-app/InCallUI/InCallUI.apk \
-    priv-app/Keyguard/Keyguard.apk \
     priv-app/ManagedProvisioning/ManagedProvisioning.apk \
     priv-app/MediaProvider/MediaProvider.apk \
-    priv-app/Mms/Mms.apk \
+    priv-app/MmsService/MmsService.apk \
     priv-app/PackageInstaller/PackageInstaller.apk \
     priv-app/SettingsProvider/SettingsProvider.apk \
     priv-app/Settings/Settings.apk \
-    priv-app/SystemUI/SystemUI.apk \
     priv-app/Telecom/Telecom.apk \
     priv-app/TelephonyProvider/TelephonyProvider.apk \
     priv-app/TeleService/TeleService.apk
@@ -70,48 +61,12 @@ BOARD_PROPERTY_OVERRIDES += \
     ro.build.mask.id=$(PLATFORM_VERSION)-$(shell date +%s)_R
 
 BOARD_PROPERTY_FOLLOW_BASE := \
-    persist.sys.disable_blur_view \
-    persist.sys.disable_glass_blur \
-    persist.sys.keyguard_intercep \
-    persist.sys.meizu.codepage \
-    persist.sys.meizu.region \
-    persist.sys.static_blur_mode \
-    persist.sys.use.flyme.icon \
-    ro.build.display.id \
-    ro.config.alarm_alert \
-    ro.config.calendar_sound \
-    ro.config.email_sound \
-    ro.config.mms_sound \
-    ro.config.notification_sound \
-    ro.config.ringtone \
-    ro.flyme.hideinfo \
-    ro.flyme.published \
-    ro.flyme.version \
-    ro.meizu.autorecorder \
-    ro.meizu.contactmsg.auth \
-    ro.meizu.customize.pccw \
-    ro.meizu.permanentkey \
-    ro.meizu.published.type \
-    ro.meizu.region.enable \
-    ro.meizu.rom.config \
-    ro.meizu.security \
-    ro.meizu.setupwizard.flyme \
-    ro.meizu.setupwizard.setlang \
-    ro.meizu.sip.support \
-    ro.meizu.upgrade.config \
-    ro.meizu.visualvoicemail \
-    ro.meizu.voip.support \
-    sys.meizu.m35x.white.config \
-    sys.meizu.white.config
+	
 
 
 BOARD_SERVICES += \
 
 BOARD_PREBUILT_FOLDER := \
-    flyme \
-    meizu \
-    com/flyme \
-    com/meizu
 
 BOARD_PREBUILT_PACKAGE_framework := $(BOARD_PREBUILT_FOLDER)
 
@@ -126,7 +81,7 @@ ifeq ($(filter Phone,$(vendor_modify_apps)),)
 ifneq ($(strip $(call isExist,Phone.apk,$(VENDOR_SYSTEM))),)
 ifneq ($(strip $(call isExist,Phone.apk,$(BOARD_SYSTEM_FOR_POS))),)
 NEED_COMPELETE_MODULE_PAIR += \
-    app/Phone.apk:Phone
+
 endif # ifneq ($(call posOfApp,Phone,$(BOARD_SYSTEM_FOR_POS)),)
 endif # ifneq ($(call posOfApp,Phone,$(VENDOR_SYSTEM)),)
 endif # ifeq ($(filter Phone,$(vendor_modify_apps)),)
@@ -146,9 +101,9 @@ $(call resetPosition,BOARD_PRESIGNED_APPS_DEFAULT,$(BOARD_SYSTEM_FOR_POS))
 
 ifeq ($(OTA_ZIP),)
 ifeq ($(ROMER),)
-PRJ_FULL_OTA_ZIP := $(OUT_DIR)/flyme_$(TARGET_MODEL)_$(DISPLAY_VERSION).zip
+PRJ_FULL_OTA_ZIP := $(OUT_DIR)/HydrogenOS_$(TARGET_MODEL)_$(DISPLAY_VERSION).zip
 else
-PRJ_FULL_OTA_ZIP := $(OUT_DIR)/flyme_$(TARGET_MODEL)_$(ROMER)_$(DISPLAY_VERSION).zip
+PRJ_FULL_OTA_ZIP := $(OUT_DIR)/HydrogenOS_$(TARGET_MODEL)_$(ROMER)_$(DISPLAY_VERSION).zip
 endif
 else
 PRJ_FULL_OTA_ZIP := $(OTA_ZIP)
@@ -165,8 +120,6 @@ BOARD_PROPERTY_FOLLOW_BASE += \
 
 else
 BOARD_PROPERTY_FOLLOW_BASE += \
-    persist.sys.ui.hw \
-    persist.sys.timezone \
     ro.product.locale
 
 endif
