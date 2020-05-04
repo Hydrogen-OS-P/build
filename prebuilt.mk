@@ -75,9 +75,6 @@ ifneq ($(RESOLUTION),)
 	ifneq ($(wildcard $(BOARD_BOOTANIMATION)/bootanimation_$(RESOLUTION).zip),)
         $(eval $(call prebuilt_template,$(BOARD_BOOTANIMATION)/bootanimation_$(RESOLUTION).zip,$(OUT_SYSTEM)/media/bootanimation.zip))
 	endif
-	ifneq ($(wildcard $(BOARD_BOOTANIMATION)/shutanimation_$(RESOLUTION).zip),)
-        $(eval $(call prebuilt_template,$(BOARD_BOOTANIMATION)/shutanimation_$(RESOLUTION).zip,$(OUT_SYSTEM)/media/shutanimation.zip))
-	endif
 endif
 
 ###################### prebuilt ##############################
