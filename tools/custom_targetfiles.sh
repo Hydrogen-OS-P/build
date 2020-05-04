@@ -3,11 +3,11 @@
 TARGET_FILES_DIR=$1
 SYSTEM_DIR=$TARGET_FILES_DIR/SYSTEM
 
-function custom_flymeRes()
+function custom_oneplusRes()
 {
-    if [ -f $SYSTEM_DIR/framework/flyme-res/flyme-res.apk ]; then
-        mv $SYSTEM_DIR/framework/flyme-res/flyme-res.apk $SYSTEM_DIR/framework/flyme-res/flyme-res.jar
+    if [ -f $SYSTEM_DIR/priv-app/oneplus-framework-res/oneplus-framework-res.apk ]; then
+        mv $SYSTEM_DIR/priv-app/oneplus-framework-res/oneplus-framework-res.apk 
     fi
 }
 
-custom_flymeRes
+custom_oneplusRes

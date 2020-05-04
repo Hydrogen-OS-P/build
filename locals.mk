@@ -232,8 +232,8 @@ PRJ_UPDATER_SCRIPT_PART    := $(PRJ_META_INF_OVERLAY)/updater-script.part
 
 ################# board's overlay ###########################
 #BOARD_OVERLAY           := $(PORT_ROOT)/board/frameworks/overlay
-# TODO config different board, not hard code to be flyme
-BOARD_OVERLAY           := $(PORT_ROOT)/flyme/overlay
+# TODO config different board, not hard code to be Hydrogen
+BOARD_OVERLAY           := $(PORT_ROOT)/Hydrogen/overlay
 BOARD_FRAMEWORK_OVERLAY := $(BOARD_OVERLAY)/frameworks/base/core/res/res
 
 ################## board's source ###########################

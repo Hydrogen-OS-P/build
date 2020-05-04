@@ -148,7 +148,7 @@ function updateSystemPartitionSize {
         SYSTEM_SOFT_MOUNT_POINT=$(adb shell su -c ls -l $SYSTEM_MOUNT_POINT | awk -F '/dev' '{print $2}' |awk -F '/' '{print $NF}')
     else
         waitForDeviceOnline
-        SYSTEM_SOFT_MOUNT_POINT=$(adb shell ls -l $SYSTEM_MOUNT_POINT | awk -F '/dev' '{print $2}' |awk -F '/' '{print $NF}')
+        SYSTEM_SOFT_MOUNT_POINT=$(adb shell su -c ls -l $SYSTEM_MOUNT_POINT | awk -F '/dev' '{print $2}' |awk -F '/' '{print $NF}')
     fi
     SYSTEM_PARTITION_SIZE=$(adb shell su -c cat proc/partitions | grep $SYSTEM_SOFT_MOUNT_POINT | awk 'BEGIN{FS=" "}{print $3}')
     if [ x"$SYSTEM_PARTITION_SIZE" = x ] || [ -z "$(echo $SYSTEM_PARTITION_SIZE | sed -n "/^[0-9]\+$/p")" ]; then
@@ -337,7 +337,7 @@ function pullSpecialSelabelFile {
 # build the SYSTEM dir under target_files
 function buildSystemDir {
     echo ">> retrieve whole /system from device (time-costly, be patient) ..."
-    adb shell su -c cp -r /system /sdcard/system 2>&1
+    adb shell su -c cp -r -P -aL /system /sdcard/system 2>&1
     adb pull /sdcard/system $SYSTEM_DIR 2>&1 | tee $OUT_DIR/system-pull.log 2>&1
     adb shell rm -rf /sdcard/system 
     pullSpecialSelabelFile
