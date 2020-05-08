@@ -70,7 +70,7 @@ function waitForDeviceOnline {
     local timeout=30
     while [ $timeout -gt 0 ]
     do
-        if adb shell su -c ls  > /dev/null 2>&1; then
+        if adb shell su -c 'ls /system' > /dev/null 2>&1; then
             echo "<< device is online"
             break
         fi
@@ -143,12 +143,20 @@ function copyTargetFilesTemplate {
 #################################################################################################
 function updateSystemPartitionSize {
     echo ">> get system partition size ..."
-    SYSTEM_MOUNT_POINT=$(adb shell su -c mount | grep "/cache" | awk 'BEGIN{FS="/cache"}{print $1}')/system
-    if [ "$ROOT_STATE" = "system_root" ];then
-        SYSTEM_SOFT_MOUNT_POINT=$(adb shell su -c ls -l $SYSTEM_MOUNT_POINT | awk -F '/dev' '{print $2}' |awk -F '/' '{print $NF}')
+    if [ x"$IS_AB_SYSTEM" = x"true" ]; then
+        echo ">> Is A/B System Device"
+        slot_suffix=$(adb shell getprop ro.boot.slot_suffix)
+        if [ x"$slot_suffix" = x ]; then
+            slot_suffix="_a"
+        fi
+    fi
+    if [ "$ROOT_STATE" = "system_root" ]; then
+        SYSTEM_MOUNT_POINT=$(adb shell su -c find /dev/block/bootdevice/by-name -name system$slot_suffix)
+        SYSTEM_SOFT_MOUNT_POINT=$(adb shell su -c ls -l $SYSTEM_MOUNT_POINT | awk -F '->' '{print $2}' | awk -F '/' '{print $NF}')
     else
         waitForDeviceOnline
-        SYSTEM_SOFT_MOUNT_POINT=$(adb shell su -c ls -l $SYSTEM_MOUNT_POINT | awk -F '/dev' '{print $2}' |awk -F '/' '{print $NF}')
+        SYSTEM_MOUNT_POINT=$(adb shell find /dev/block/bootdevice/by-name -name "system"$slot_suffix)
+        SYSTEM_SOFT_MOUNT_POINT=$(adb shell ls -l $SYSTEM_MOUNT_POINT | awk -F '->' '{print $2}' | awk -F '/' '{print $NF}')
     fi
     SYSTEM_PARTITION_SIZE=$(adb shell su -c cat proc/partitions | grep $SYSTEM_SOFT_MOUNT_POINT | awk 'BEGIN{FS=" "}{print $3}')
     if [ x"$SYSTEM_PARTITION_SIZE" = x ] || [ -z "$(echo $SYSTEM_PARTITION_SIZE | sed -n "/^[0-9]\+$/p")" ]; then
@@ -175,13 +183,12 @@ function buildSystemInfo {
     adb shell rm /data/local/tmp/file.info
     adb shell touch /data/local/tmp/file.info
     adb shell chmod 666 /data/local/tmp/file.info
-    adb shell su -c chown -R shell:shell /data/local/tmp/
 
     waitForDeviceOnline
     if [ "$ROOT_STATE" = "system_root" ];then
         #adb push $TOOL_DIR/releasetools/getsysteminfocommand /data/local/tmp
         #echo "su < /data/local/tmp/getsysteminfocommand; exit" | adb shell
-        adb shell /data/local/tmp/getfilesysteminfo.sh
+        adb shell su -c /data/local/tmp/getfilesysteminfo.sh
 
     else
         adb shell chmod 0777 /data/local/tmp/getfilesysteminfo.sh
@@ -203,6 +210,62 @@ function buildSystemInfo {
     echo "<< get filesystem_config.txt from phone done"
     echo "* out ==> $META_DIR/filesystem_config.txt"
     echo " "
+}
+
+# get system files info from phone
+function buildSystemDir_dd {
+    echo ">> dd system from device (time-costly, be patient) ..."
+    waitForDeviceOnline
+    if [ "$ROOT_STATE" = "system_root" ];then
+        adb shell su -c dd if=$SYSTEM_MOUNT_POINT of=/sdcard/system.img bs=2048 > /dev/null 2>&1
+    else
+        adb shell dd if=$SYSTEM_MOUNT_POINT of=/sdcard/system.img bs=2048 > /dev/null 2>&1
+    fi
+    adb pull /sdcard/system.img $OUT_DIR/system.img  > /dev/null 2>&1
+    adb shell rm /sdcard/system.img
+    unpack_systemimg $OUT_DIR/system.img $SYSTEM_DIR
+    if [ x"$IS_AB_SYSTEM" = x"true" ]; then
+        mv $SYSTEM_DIR $OEM_TARGET_DIR/ROOT
+        mv $OEM_TARGET_DIR/ROOT/system $SYSTEM_DIR
+        mkdir $OEM_TARGET_DIR/ROOT/system
+        rm -f $SYSTEM_DIR/lost+found
+    fi
+    echo "<< dd system from device (time-costly, be patient) done"
+    echo " "
+}
+
+function unpack_systemimg {
+    local systemimg=$1
+    local outdir=$2
+
+    if [ "x$systemimg" = "x" ]; then
+        return 1
+    fi
+
+    echo ">>> begin unpack $systemimg"
+    if [ "x$outdir" = "x" ]; then
+        outdir=$PWD
+    fi
+
+    if [ -f $systemimg ]; then
+        mkdir -p $outdir
+        tmpMnt=`mktemp -dt system.XXXX.mnt`
+        sudo mount -t ext4 -o loop $systemimg $tmpMnt
+
+        sudo cp -rf $tmpMnt/* $outdir
+        sudo umount $tmpMnt
+        sudo chmod 777 -R $outdir
+
+        rm -rf $tmpMnt
+
+        echo ">>> success unpack $systemimg to $outdir"
+        return 0
+    else
+        echo ">>> $systemimg doesn't exist! "
+    fi
+
+    echo ">>> failed to unpack $systemimg"
+    return 1
 }
 
 # build apkcerts.txt from packages.xml
@@ -337,9 +400,7 @@ function pullSpecialSelabelFile {
 # build the SYSTEM dir under target_files
 function buildSystemDir {
     echo ">> retrieve whole /system from device (time-costly, be patient) ..."
-    adb shell su -c cp -r -P -aL /system /sdcard/system 2>&1
-    adb pull /sdcard/system $SYSTEM_DIR 2>&1 | tee $OUT_DIR/system-pull.log 2>&1
-    adb shell rm -rf /sdcard/system 
+    adb pull /system $SYSTEM_DIR 2>&1 | tee $OUT_DIR/system-pull.log
     pullSpecialSelabelFile
     find $SYSTEM_DIR -name su | xargs rm -f
     find $SYSTEM_DIR -name .suv | xargs rm -f
@@ -388,7 +449,7 @@ function targetFromPhone {
     #buildSystemInfo
     buildApkcerts
     #buildSystemDir
-    buildSystemDir
+    buildSystemDir_dd
     #recoverSystemSymlink
 
     prepareBootRecovery
@@ -422,8 +483,7 @@ function buildSystemInfoFromPackage {
 
     if [ ! -f $META_DIR/system.info -o ! -f $META_DIR/link.info ];then
         echo "<< ERROR: Failed to create system.info or link.info!!"
-        exit $ERR_MISSION_FAILEDsystem partition size get error!
-
+        exit $ERR_MISSION_FAILED
     fi
 
     cat $META_DIR/system.info | sed '/\bsuv\b/d;/\bsu\b/d;/\binvoke-as\b/d' | sort > $META_DIR/filesystem_config.txt
