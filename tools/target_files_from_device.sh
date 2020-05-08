@@ -216,7 +216,7 @@ function buildApkcerts {
         adb shell cat /data/system/packages.xml > $OEM_TARGET_DIR/packages.xml
     fi
 
-    python $TOOL_DIR/apkcerts.py $OEM_TARGET_DIR/packages.xml $META_DIR/apkcerts.txt
+    $TOOL_DIR/apkcerts.py $OEM_TARGET_DIR/packages.xml $META_DIR/apkcerts.txt
     cat $META_DIR/apkcerts.txt | sort > $META_DIR/temp.txt
     mv $META_DIR/temp.txt $META_DIR/apkcerts.txt
     rm -f $OEM_TARGET_DIR/packages.xml
