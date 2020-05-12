@@ -136,8 +136,8 @@ $(VENDOR_TARGET_ZIP): $(VENDOR_RECOVERY_FSTAB) bootimage
 	$(hide) cp -r $(VENDOR_DIR) $(VENDOR_TARGET_DIR)
 	$(hide) mv $(VENDOR_TARGET_DIR)/system $(VENDOR_TARGET_DIR)/SYSTEM
 	$(hide) if [ -f $(OUT_DIR)/boot.img ]; then cp -r $(OUT_DIR)/boot.img $(VENDOR_TARGET_DIR)/IMAGES/boot.img; fi
-	$(hide) if [ -f $(OUT_OBJ_BOOT)/RAMDISK/file_contexts.bin ]; then \
-			cp -r $(OUT_OBJ_BOOT)/RAMDISK/file_contexts.bin $(VENDOR_TARGET_DIR)/META/file_contexts.bin; \
+	$(hide) if [ -f $(OUT_OBJ_BOOT)/RAMDISK/plat_file_contexts ]; then \
+			cp -r $(OUT_OBJ_BOOT)/RAMDISK/plat_file_contexts $(VENDOR_TARGET_DIR)/META/file_contexts.bin; \
 		fi
 	$(hide) if [ -d $(PRJ_ROOT)/ROOT ]; then \
 			rm -rf $(VENDOR_TARGET_DIR)/ROOT; \
