@@ -198,7 +198,7 @@ update_file_system_config: $(VENDOR_DIR)
 				fi; \
 			else \
 				echo "get file_contexts.bin from phone ..."; \
-				adb pull /file_contexts.bin $(OUT_DIR)/file_contexts.bin; \
+				adb pull /plat_file_contexts $(OUT_DIR)/file_contexts.bin; \
 				echo -n ""; \
 			fi; \
 		fi;
