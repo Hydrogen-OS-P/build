@@ -90,11 +90,6 @@ BOARD_DIR          := $(PRJ_ROOT)/board
 BOARD_ZIP          := $(BOARD_DIR)/board.zip
 BOARD_LAST_ZIP     := $(BOARD_DIR)/last_board.zip
 
-ifeq ($(strip $(THEME_RES)),)
-ifneq ($(wildcard $(BOARD_DIR)/theme_full_res.zip),)
-THEME_RES := $(BOARD_DIR)/theme_full_res.zip
-endif
-endif
 
 ##################### apktool tags ########################
 # which used to compile multiple projects simultaneously
