@@ -206,13 +206,13 @@ OUT_BUILD_PROP       := $(OUT_SYSTEM)/build.prop
 # convert filesystem_config to data
 CONVERT_FILESYSTEM   := $(PORT_ROOT)/build/tools/convert_filesystem.py
 
-OUT_MAC_PERMISSIONS_XML := $(OUT_SYSTEM)/etc/security/mac_permissions.xml
+OUT_MAC_PERMISSIONS_XML := $(OUT_SYSTEM)/etc/selinux/plat_mac_permissions.xml
 
 ####################### board's release ###################
 ifneq ($(strip $(PRODUCE_INTERNATIONAL_ROM)),true)
-BOARD_RELEASE := $(PORT_ROOT)/flyme/release/chinese/arm
+BOARD_RELEASE := $(PORT_ROOT)/Hydrogen/release/chinese/arm
 else
-BOARD_RELEASE := $(PORT_ROOT)/flyme/release/international/arm
+BOARD_RELEASE := $(PORT_ROOT)/Hydrogen/release/international/arm
 endif
 
 ################# target-files zips #######################
