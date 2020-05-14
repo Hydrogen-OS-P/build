@@ -174,7 +174,7 @@ VENDOR_FRAMEWORK_APKS := $(patsubst %,$(VENDOR_SYSTEM)/%, \
     $(strip $(sort $(filter framework/%.apk, $(ALL_VENDOR_FILES)))))
 
 FRAMEWORK_APKS_TARGETS := $(patsubst %,$(OUT_SYSTEM)/%,\
-    $(strip $(sort $(filter framework/%.apk, framework/flyme-res/flyme-res.apk $(ALL_VENDOR_FILES)))))
+    $(strip $(sort $(filter framework/%.apk, $(ALL_VENDOR_FILES)))))
 
 
 $(BOARD_FRAMEWORK_APKS): $(PREPARE_SOURCE)
@@ -593,6 +593,7 @@ endif
 
 ################# update the apk certs #################
 .PHONY: updateapkcerts
+BASE_VENDOR := $(PORT_ROOT)/devices/base/vendor/META
 updateapkcerts: $(OUT_META)/apkcerts.txt
 	$(hide) echo "* apkcerts.txt ==> $(OUT_META)/apkcerts.txt"
 
@@ -604,6 +605,8 @@ $(OUT_OBJ_META)/apkcerts.txt: USE_VENDOR_CERT_APPS:= $(strip $(patsubst %,%.apk,
 $(OUT_OBJ_META)/apkcerts.txt: $(BOARD_META)/apkcerts.txt $(VENDOR_META)/apkcerts.txt
 	$(hide) echo ">>> generate |target-files|META|apkcerts.txt| ...";
 	$(hide) mkdir -p $(OUT_OBJ_META)
+	$(hide) mkdir -p $(BOARD_META)
+	cp $(BASE_VENDOR)/apkcerts.txt $(BOARD_META)/apkcerts.txt;
 	$(hide) if [ -f $(BOARD_META)/apkcerts.txt ]; then \
 			cp $(BOARD_META)/apkcerts.txt $(OUT_OBJ_DIR)/apkcerts.txt; \
 		else \
