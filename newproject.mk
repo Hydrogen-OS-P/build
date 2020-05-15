@@ -189,29 +189,29 @@ recovery_link: $(VENDOR_DIR)
 update_file_system_config: $(VENDOR_DIR)
 	$(hide) echo "> update file system config info ..."
 	$(hide) if [ ! -d $(OUT_DIR) ]; then mkdir -p $(OUT_DIR); fi
-	$(hide) if [ ! -f $(OUT_DIR)/file_contexts.bin ]; then \
-			if [ -f $(PRJ_BOOT_IMG_OUT)/RAMDISK/file_contexts.bin ]; then \
+	$(hide) if [ ! -f $(OUT_DIR)/plat_file_contexts ]; then \
+			if [ -f $(VENDOR_SYSTEM)/etc/selinux/plat_file_contexts ]; then \
 				if [ x"$(PRODUCE_IS_AB_UPDATE)" = x"true" ]; then \
-					cp $(PRJ_ROOT)/ROOT/file_contexts.bin $(OUT_DIR)/file_contexts.bin; \
+					cp $(PRJ_ROOT)/ROOT/system/etc/selinux/plat_file_contexts $(OUT_DIR)/plat_file_contexts; \
 				else \
-					cp $(PRJ_BOOT_IMG_OUT)/RAMDISK/file_contexts.bin $(OUT_DIR)/file_contexts.bin; \
+					cp $(VENDOR_SYSTEM)/etc/selinux/plat_file_contexts $(OUT_DIR)/plat_file_contexts; \
 				fi; \
 			else \
 				echo "get file_contexts.bin from phone ..."; \
-				adb pull /plat_file_contexts $(OUT_DIR)/file_contexts.bin; \
+				adb pull /system/etc/selinux/plat_file_contexts $(OUT_DIR)/plat_file_contexts; \
 				echo -n ""; \
 			fi; \
 		fi;
-	$(hide) if [ -f $(OUT_DIR)/file_contexts.bin ]; then \
+	$(hide) if [ -f $(OUT_DIR)/plat_file_contexts ]; then \
 			cd $(VENDOR_DIR); zip -qry $(PRJ_ROOT)/$(OUT_DIR)/vendor_system.zip system; cd - > /dev/null; \
 			zipinfo -1 $(OUT_DIR)/vendor_system.zip \
-				| $(PORT_ROOT)/build/tools/bin/fs_config -C -D $(VENDOR_SYSTEM) -S $(OUT_DIR)/file_contexts.bin \
+				| $(PORT_ROOT)/build/tools/bin/fs_config -C -D $(VENDOR_SYSTEM) -S $(OUT_DIR)/plat_file_contexts \
 				| sort > $(VENDOR_META)/filesystem_config.txt; \
 			rm $(PRJ_ROOT)/$(OUT_DIR)/vendor_system.zip; \
 			if [ x"$(PRODUCE_IS_AB_UPDATE)" = x"true" ]; then \
 				cd $(VENDOR_DIR)/ROOT; zip -qry $(PRJ_ROOT)/$(OUT_DIR)/vendor_root.zip .; cd - > /dev/null; \
 				zipinfo -1 $(OUT_DIR)/vendor_root.zip \
-					| $(PORT_ROOT)/build/tools/bin/fs_config -C -D $(VENDOR_DIR)/ROOT -S $(OUT_DIR)/file_contexts.bin \
+					| $(PORT_ROOT)/build/tools/bin/fs_config -C -D $(VENDOR_DIR)/ROOT -S $(OUT_DIR)/plat_file_contexts \
 					| sort > $(VENDOR_META)/root_filesystem_config.txt; \
 				rm $(PRJ_ROOT)/$(OUT_DIR)/vendor_root.zip; \
 			fi; \
