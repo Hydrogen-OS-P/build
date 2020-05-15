@@ -109,7 +109,7 @@ VENDOR_DIR := vendor
 VENDOR_META           := $(VENDOR_DIR)/META
 VENDOR_METAINF        := $(VENDOR_DIR)/METAINF
 VENDOR_OTA            := $(VENDOR_DIR)/OTA
-VENDOR_SYSTEM         := $(VENDOR_DIR)/system
+VENDOR_SYSTEM         := $(VENDOR_DIR)/system/system
 VENDOR_FRAMEWORK      := $(VENDOR_SYSTEM)/framework
 VENDOR_FRAMEWORK_RES  := $(VENDOR_SYSTEM)/framework/framework-res.apk
 
