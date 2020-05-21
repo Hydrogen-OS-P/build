@@ -7,7 +7,7 @@ ERR_NOT_PREPARE_BOOT_IMG=212
 # Some custom defines
 # vendor_modify_images := boot/boot.img recovery/recovery.img
 
-UNPACK_BOOT_PY := $(PORT_ROOT)/tools/bootimgpack/unpack_bootimg.py
+UNPACK_BOOT_SH := $(PORT_ROOT)/tools/bootimgpack/mkboot
 PACK_BOOT_PY := $(PORT_ROOT)/tools/bootimgpack/pack_bootimg.py
 SEPOLICY_INJECT := $(PORT_ROOT)/build/tools/custom_sepolicy.sh
 BOARD_SERVICE_PART := $(PORT_ROOT)/tools/bootimgpack/init.rc.part
@@ -40,15 +40,30 @@ unpack-boot:
 			exit $(ERR_NOT_PREPARE_BOOT_IMG); \
 		fi
 	$(hide) rm -rf $(OUT_OBJ_BOOT)
-	$(hide) $(UNPACK_BOOT_PY) $(PRJ_BOOT_IMG) $(OUT_OBJ_BOOT);
-	$(hide) cp -r $(OUT_OBJ_BOOT) $(PRJ_BOOT_DIR)
+	$(hide) rm -rf $(PRJ_BOOT_DIR)
+	$(hide) $(UNPACK_BOOT_SH) $(PRJ_BOOT_IMG) $(OUT_OBJ_BOOT);
+	$(hide) cp -r $(OUT_OBJ_BOOT) $(PRJ_BOOT_DIR) 
 	$(hide) echo "<< unpack $(PRJ_BOOT_IMG) to $(PRJ_BOOT_DIR) done"
-	$(hide) if [ -f $(PRJ_BOOT_IMG_OUT)/RAMDISK/file_contexts.bin ]; then \
-			echo ">> unpack $(PRJ_BOOT_IMG_OUT)/RAMDISK/file_contexts.bin ...";  \
-			$(SEFCONTEXT_TOOL) -o $(PRJ_BOOT_IMG_OUT)/RAMDISK/file_contexts $(PRJ_BOOT_IMG_OUT)/RAMDISK/file_contexts.bin; \
-			echo "<< unpack $(PRJ_BOOT_IMG_OUT)/RAMDISK/file_contexts.bin done";  \
+	$(hide) echo ">> check $(PRJ_BOOT_IMG_OUT)/ramdisk/file_contexts ...";  \
+			if [ -f $(PRJ_BOOT_IMG_OUT)/ramdisk/file_contexts ]; then \
+			echo "<< check $(PRJ_BOOT_IMG_OUT)/ramdisk/file_contexts done";  \
+			else \
+			echo "<< $(PRJ_BOOT_IMG_OUT)/ramdisk/file_contexts no found";  \
 		fi
-
+# add support Pie 		
+	$(hide) echo ">> check $(PRJ_BOOT_IMG_OUT)/ramdisk/plat_file_contexts ...";  \
+			if [ -f $(PRJ_BOOT_IMG_OUT)/ramdisk/plat_file_contexts ]; then \
+			cp $(PRJ_BOOT_IMG_OUT)/ramdisk/plat_file_contexts $(PRJ_BOOT_IMG_OUT)/ramdisk/file_contexts; \
+			echo "<< check $(PRJ_BOOT_IMG_OUT)/ramdisk/plat_file_contexts done";  \
+			else \
+			echo "<< $(PRJ_BOOT_IMG_OUT)/ramdisk/plat_file_contexts no found";  \
+		fi
+	$(hide)	if [ -f $(PRJ_BOOT_IMG_OUT)/ramdisk/file_contexts ]; then \
+		echo -e "\033[31m Warn: \033[0m file_contexts is existed,plat_file_contexts is not necessary.";  \
+		else \
+		echo -e "\033[31m plat_file_contexts file_contexts no found.Check one of them \033[0m"; \
+		fi
+		
 endif
 
 ###### pack boot ######
@@ -144,7 +159,7 @@ endif
 			exit $(ERR_NOT_PREPARE_RECOVERY_IMG); \
 		fi
 	$(hide) rm -rf $(OUT_OBJ_RECOVERY)
-	$(hide) $(UNPACK_BOOT_PY) $(PRJ_RECOVERY_IMG) $(OUT_OBJ_RECOVERY)
+	$(hide) $(UNPACK_BOOT_SH) $(PRJ_RECOVERY_IMG) $(OUT_OBJ_RECOVERY)
 ifeq ($(PRODUCE_IS_AB_UPDATE),true)
 	$(hide) rm $(PRJ_RECOVERY_IMG)
 endif
