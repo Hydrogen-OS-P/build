@@ -190,7 +190,7 @@ OUT_RECOVERY         := $(OUT_TARGET_DIR)/RECOVERY
 OUT_SYSTEM           := $(OUT_TARGET_DIR)/SYSTEM
 OUT_DATA             := $(OUT_TARGET_DIR)/DATA
 
-OUT_RECOVERY_FSTAB   := $(OUT_RECOVERY)/RAMDISK/etc/recovery.fstab
+OUT_RECOVERY_FSTAB   := $(OUT_RECOVERY)/ramdisk/etc/recovery.fstab
 
 OUT_SYSTEM_APP       := $(OUT_SYSTEM)/app
 OUT_SYSTEM_FRAMEWORK := $(OUT_SYSTEM)/framework
