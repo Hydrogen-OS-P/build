@@ -374,7 +374,6 @@ PUSH                 := $(PORT_TOOLS)/push
 FLASH                := $(PORT_TOOLS)/bootimgpack/flash.py
 DEEFAULT_PERMISSION  ?= 644
 
-SEFCONTEXT_TOOL := $(PORT_TOOLS)/reverses/sefcontext/sefcontext
 SEFCONTEXT_COMPILE_TOOL := $(PORT_BUILD_TOOLS)/bin/sefcontext_compile
 
 ################### tools for project ####################
