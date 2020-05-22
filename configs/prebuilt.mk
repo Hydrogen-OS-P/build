@@ -13,7 +13,6 @@ BOARD_PREBUILT += \
 ifeq ($(strip $(PRODUCE_INTERNATIONAL_ROM)),true)
 BOARD_PREBUILT += \
 
-else
+
 BOARD_PREBUILT += \
 
-endif
