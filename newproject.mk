@@ -193,7 +193,7 @@ recovery_link: $(VENDOR_DIR)
 update_file_system_config: $(VENDOR_DIR)
 	$(hide) echo "> update file system config info ..."
 	$(hide) if [ ! -d $(OUT_DIR) ]; then mkdir -p $(OUT_DIR); fi
-	$(hide) if [ ! -f $(OUT_DIR)/plat_file_contexts ]; then \
+	$(hide) if [ ! -f $(OUT_DIR)/file_contexts ]; then \
 			if [ -f $(PRJ_BOOT_IMG_OUT)/ramdisk/plat_file_contexts ]; then \
 				if [ x"$(PRODUCE_IS_AB_UPDATE)" = x"true" ]; then \
 					cp $(PRJ_BOOT_IMG_OUT)/ramdisk/plat_file_contexts $(OUT_DIR)/file_contexts; \
@@ -201,7 +201,8 @@ update_file_system_config: $(VENDOR_DIR)
 					cp $(PRJ_BOOT_IMG_OUT)/ramdisk/file_contexts $(OUT_DIR)/file_contexts; \
 				fi; \
 			else \
-				echo "get file_contexts.bin from phone ..."; \
+				echo "get plat_file_contexts from phone ..."; \
+				echo -e "\033[31m If pull failed please add file into out dir and Name it as file_contexts... \033[0m"; \
 				adb pull /plat_file_contexts $(OUT_DIR)/file_contexts; \
 			fi; \
 		fi;
