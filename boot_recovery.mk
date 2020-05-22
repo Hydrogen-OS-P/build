@@ -100,7 +100,7 @@ prepare_boot_ramdisk:
 ifneq ($(strip $(PRODUCE_SEPOLICY_INJECT)),false)
 	$(hide) $(SEPOLICY_INJECT) $(OUT_OBJ_BOOT)/RAMDISK/sepolicy
 endif
-	$(hide) if [ -f $(OUT_OBJ_BOOT)/RAMDISK/file_contexts.bin ]; then \
+	$(hide) if [ -f $(OUT_OBJ_BOOT)/ramdisk/file_contexts.bin ]; then \
 			echo ">> pack $(OUT_OBJ_BOOT)/RAMDISK/file_contexts.bin ..."; \
 			$(SEFCONTEXT_COMPILE_TOOL) -o $(OUT_OBJ_BOOT)/RAMDISK/file_contexts.bin $(OUT_OBJ_BOOT)/RAMDISK/file_contexts; \
 			rm -r $(OUT_OBJ_BOOT)/RAMDISK/file_contexts; \
@@ -115,7 +115,7 @@ endif
 $(OUT_BOOT_IMG): prepare_boot_ramdisk
 	$(hide) echo ">> pack $(OUT_OBJ_BOOT) to $(OUT_DIR)/$(BOOT_IMG) ..."
 	$(hide) mkdir -p `dirname $@`
-	$(hide) $(PACK_BOOT_PY) $(OUT_OBJ_BOOT) $@
+	$(hide) $(UNPACK_BOOT_SH) $(OUT_OBJ_BOOT) $@
 	$(hide) cp $@ $(OUT_DIR)/$(BOOT_IMG)
 	$(hide) echo "<< pack $(OUT_OBJ_BOOT) to $(OUT_DIR)/$(BOOT_IMG) done"
 endif
@@ -217,7 +217,7 @@ $(OUT_RECOVERY_IMG): prepare_recovery_ramdisk
 			cat $(VENDOR_RECOVERY_DEFAULT_PROP) >> $(OUT_OBJ_RECOVERY_DEFAULT_PROP); \
 		fi
 	$(hide) mkdir -p `dirname $@`
-	$(hide) $(PACK_BOOT_PY) $(OUT_OBJ_RECOVERY) $@
+	$(hide) $(UNPACK_BOOT_SH) $(OUT_OBJ_RECOVERY) $@
 	$(hide) cp $@ $(OUT_DIR)/$(RECOVERY_IMG)
 	$(hide) echo "<< pack $(RECOVERY_IMG) done"
 endif
