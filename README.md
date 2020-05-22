@@ -5,7 +5,7 @@ English | [简体中文](./README_CN.md)
  * envsetup.sh
    Execute `source build/envsetup.sh` for initialization environment
 
- * Flyme system boot/shutdown animation, in the implementation of the `make fullota` will be
+ * Hydrogen system boot/shutdown animation, in the implementation of the `make fullota` will be
    Based on the `RESOLUTION` parameters of the corresponding copy of the animation to the OTA package
 
  * compatibility

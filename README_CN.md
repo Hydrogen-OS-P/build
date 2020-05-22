@@ -6,7 +6,7 @@
    执行`source build/envsetup.sh`用于初始化环境
 
  * bootanimations
-   Flyme 系统的开关机动画,在执行`make fullota`的时候会根据机型的`RESOLUTION`参数拷贝对应的动画到ota包中.
+   Hydrogen 系统的开关机动画,在执行`make fullota`的时候会根据机型的`RESOLUTION`参数拷贝对应的动画到ota包中.
 
  * compatibility
    兼容性文件,存放可能用于替换到ota包中的文件.
