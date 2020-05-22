@@ -136,14 +136,18 @@ $(VENDOR_TARGET_ZIP): $(VENDOR_RECOVERY_FSTAB) bootimage
 	$(hide) cp -r $(VENDOR_DIR) $(VENDOR_TARGET_DIR)
 	$(hide) mv $(VENDOR_TARGET_DIR)/system $(VENDOR_TARGET_DIR)/SYSTEM
 	$(hide) if [ -f $(OUT_DIR)/boot.img ]; then cp -r $(OUT_DIR)/boot.img $(VENDOR_TARGET_DIR)/IMAGES/boot.img; fi
-	$(hide) if [ -f $(OUT_OBJ_BOOT)/RAMDISK/plat_file_contexts ]; then \
-			cp -r $(OUT_OBJ_BOOT)/RAMDISK/plat_file_contexts $(VENDOR_TARGET_DIR)/META/file_contexts.bin; \
+	$(hide) if [ -f $(OUT_OBJ_BOOT)/ramdisk/plat_file_contexts ]; then \
+			cp -r $(OUT_OBJ_BOOT)/ramdisk/plat_file_contexts $(VENDOR_TARGET_DIR)/META/file_contexts; \
+			else \
+		if [ -f $(OUT_OBJ_BOOT)/ramdisk/file_contexts ]; then \
+			cp -r $(OUT_OBJ_BOOT)/ramdisk/file_contexts $(VENDOR_TARGET_DIR)/META/file_contexts; \
+		fi
 		fi
 	$(hide) if [ -d $(PRJ_ROOT)/ROOT ]; then \
 			rm -rf $(VENDOR_TARGET_DIR)/ROOT; \
 			cp -a $(PRJ_ROOT)/ROOT $(VENDOR_TARGET_DIR); \
 		fi
-	$(hide) if [ -f $(VENDOR_TARGET_DIR)/ROOT/file_contexts.bin ]; then \
+	$(hide) if [ -f $(OUT_OBJ_BOOT)/ramdisk/plat_file_contexts  ]; then \
 			echo ">> pack $(VENDOR_TARGET_DIR)/ROOT/file_contexts.bin ..."; \
 			$(SEFCONTEXT_COMPILE_TOOL) -o $(VENDOR_TARGET_DIR)/ROOT/file_contexts.bin $(VENDOR_TARGET_DIR)/ROOT/file_contexts; \
 			rm -r $(VENDOR_TARGET_DIR)/ROOT/file_contexts; \
@@ -190,28 +194,27 @@ update_file_system_config: $(VENDOR_DIR)
 	$(hide) echo "> update file system config info ..."
 	$(hide) if [ ! -d $(OUT_DIR) ]; then mkdir -p $(OUT_DIR); fi
 	$(hide) if [ ! -f $(OUT_DIR)/plat_file_contexts ]; then \
-			if [ -f $(VENDOR_SYSTEM)/etc/selinux/plat_file_contexts ]; then \
+			if [ -f $(PRJ_BOOT_IMG_OUT)/ramdisk/plat_file_contexts ]; then \
 				if [ x"$(PRODUCE_IS_AB_UPDATE)" = x"true" ]; then \
-					cp $(PRJ_ROOT)/ROOT/system/etc/selinux/plat_file_contexts $(OUT_DIR)/plat_file_contexts; \
+					cp $(PRJ_BOOT_IMG_OUT)/ramdisk/plat_file_contexts $(OUT_DIR)/file_contexts; \
 				else \
-					cp $(VENDOR_SYSTEM)/etc/selinux/plat_file_contexts $(OUT_DIR)/plat_file_contexts; \
+					cp $(PRJ_BOOT_IMG_OUT)/ramdisk/file_contexts $(OUT_DIR)/file_contexts; \
 				fi; \
 			else \
 				echo "get file_contexts.bin from phone ..."; \
-				adb pull /system/etc/selinux/plat_file_contexts $(OUT_DIR)/plat_file_contexts; \
-				echo -n ""; \
+				adb pull /plat_file_contexts $(OUT_DIR)/file_contexts; \
 			fi; \
 		fi;
-	$(hide) if [ -f $(OUT_DIR)/plat_file_contexts ]; then \
+	$(hide) if [ -f $(OUT_DIR)/file_contexts ]; then \
 			cd $(VENDOR_DIR); zip -qry $(PRJ_ROOT)/$(OUT_DIR)/vendor_system.zip system; cd - > /dev/null; \
 			zipinfo -1 $(OUT_DIR)/vendor_system.zip \
-				| $(PORT_ROOT)/build/tools/bin/fs_config -C -D $(VENDOR_SYSTEM) -S $(OUT_DIR)/plat_file_contexts \
+				| $(PORT_ROOT)/build/tools/bin/fs_config -C -D $(VENDOR_SYSTEM) -S $(OUT_DIR)/file_contexts \
 				| sort > $(VENDOR_META)/filesystem_config.txt; \
 			rm $(PRJ_ROOT)/$(OUT_DIR)/vendor_system.zip; \
 			if [ x"$(PRODUCE_IS_AB_UPDATE)" = x"true" ]; then \
 				cd $(VENDOR_DIR)/ROOT; zip -qry $(PRJ_ROOT)/$(OUT_DIR)/vendor_root.zip .; cd - > /dev/null; \
 				zipinfo -1 $(OUT_DIR)/vendor_root.zip \
-					| $(PORT_ROOT)/build/tools/bin/fs_config -C -D $(VENDOR_DIR)/ROOT -S $(OUT_DIR)/plat_file_contexts \
+					| $(PORT_ROOT)/build/tools/bin/fs_config -C -D $(VENDOR_DIR)/ROOT -S $(OUT_DIR)/file_contexts \
 					| sort > $(VENDOR_META)/root_filesystem_config.txt; \
 				rm $(PRJ_ROOT)/$(OUT_DIR)/vendor_root.zip; \
 			fi; \
