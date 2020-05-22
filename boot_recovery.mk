@@ -41,8 +41,10 @@ unpack-boot:
 		fi
 	$(hide) rm -rf $(OUT_OBJ_BOOT)
 	$(hide) rm -rf $(PRJ_BOOT_DIR)
-	$(hide) $(UNPACK_BOOT_SH) $(PRJ_BOOT_IMG) $(OUT_OBJ_BOOT);
+	$(hide) $(UNPACK_BOOT_SH) $(PRJ_BOOT_IMG) tmp
+	$(hide) mv tmp $(OUT_OBJ_BOOT)
 	$(hide) cp -r $(OUT_OBJ_BOOT) $(PRJ_BOOT_DIR) 
+	$(hide) rm -rf $(PRJ_ROOT)/tmp
 	$(hide) echo "<< unpack $(PRJ_BOOT_IMG) to $(PRJ_BOOT_DIR) done"
 	$(hide) echo ">> check $(PRJ_BOOT_IMG_OUT)/ramdisk/file_contexts ...";  \
 			if [ -f $(PRJ_BOOT_IMG_OUT)/ramdisk/file_contexts ]; then \
