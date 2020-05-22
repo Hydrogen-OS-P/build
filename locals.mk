@@ -263,7 +263,7 @@ PRODUCT_DIR            := odexupdate
 SYSDIR                 := system
 BOOTDIR                := $(SYSDIR)/framework
 
-VENDOR_INIT_RC         := $(VENDOR_DIR)/BOOT/RAMDISK/init.rc
+VENDOR_INIT_RC         := $(VENDOR_DIR)/BOOT/ramdisk/init.rc
 
 # do not change the order in DEFAULT_BOOT_CLASS_ODEX_ORDER
 DEFAULT_BOOT_CLASS_ODEX_ORDER  := core.jar:core-junit.jar:bouncycastle.jar:ext.jar:framework.jar:android.policy.jar:services.jar:apache-xml.jar:filterfw.jar:mediatek-framework.jar:secondary_framework.jar
