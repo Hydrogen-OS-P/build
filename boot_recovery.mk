@@ -13,6 +13,7 @@ SEPOLICY_INJECT := $(PORT_ROOT)/build/tools/custom_sepolicy.sh
 BOARD_SERVICE_PART := $(PORT_ROOT)/tools/bootimgpack/init.rc.part
 
 ######################## boot #############################
+PRJ_BOOTUNPACK	 	 :=$(PRJ_ROOT)/unpack
 BOOT_IMG                 := boot.img
 PRJ_BOOT_IMG             := $(PRJ_ROOT)/$(BOOT_IMG)
 PRJ_BOOT_DIR             := $(PRJ_ROOT)/$(BOOT_IMG).out
@@ -39,12 +40,15 @@ unpack-boot:
 			echo "<< ERROR: can not find $(PRJ_BOOT_IMG)!!!";  \
 			exit $(ERR_NOT_PREPARE_BOOT_IMG); \
 		fi
-	$(hide) rm -rf $(OUT_OBJ_BOOT)
-	$(hide) rm -rf $(PRJ_BOOT_DIR)
-	$(hide) $(UNPACK_BOOT_SH) $(PRJ_BOOT_IMG) tmp
-	$(hide) mv tmp $(OUT_OBJ_BOOT)
-	$(hide) cp -r $(OUT_OBJ_BOOT) $(PRJ_BOOT_DIR) 
-	$(hide) rm -rf $(PRJ_ROOT)/tmp
+	$(hide) rm -rf $(PRJ_BOOT_DIR);
+	$(hide) rm -rf $(OUT_OBJ_BOOT);
+	$(hide) rm -rf $(PRJ_BOOTUNPACK);
+	$(hide) $(UNPACK_BOOT_SH) $(PRJ_BOOT_IMG) $(PRJ_BOOTUNPACK)
+	$(hide) mkdir -p $(OUT_OBJ_BOOT);	
+	$(hide) mv $(PRJ_BOOTUNPACK) $(OUT_OBJ_BOOT);
+	$(hide) rm -rf $(PRJ_BOOTUNPACK);
+	$(hide) cp -r $(OUT_OBJ_BOOT) $(PRJ_BOOT_DIR) ;
+	$(hide) rm -rf $(PRJ_ROOT)/tmp;
 	$(hide) echo "<< unpack $(PRJ_BOOT_IMG) to $(PRJ_BOOT_DIR) done"
 	$(hide) echo ">> check $(PRJ_BOOT_IMG_OUT)/ramdisk/file_contexts ...";  \
 			if [ -f $(PRJ_BOOT_IMG_OUT)/ramdisk/file_contexts ]; then \
