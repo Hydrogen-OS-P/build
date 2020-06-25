@@ -45,9 +45,9 @@ unpack-boot:
 	$(hide) rm -rf $(PRJ_BOOTUNPACK);
 	$(hide) $(UNPACK_BOOT_SH) $(PRJ_BOOT_IMG) $(PRJ_BOOTUNPACK)
 	$(hide) mkdir -p $(OUT_OBJ_BOOT);	
-	$(hide) mv $(PRJ_BOOTUNPACK) $(OUT_OBJ_BOOT);
+	$(hide) mv $(PRJ_BOOTUNPACK)/* $(OUT_OBJ_BOOT);
 	$(hide) rm -rf $(PRJ_BOOTUNPACK);
-	$(hide) cp -r $(OUT_OBJ_BOOT) $(PRJ_BOOT_DIR) ;
+	$(hide) cp -r $(OUT_OBJ_BOOT) $(PRJ_BOOT_DIR);
 	$(hide) rm -rf $(PRJ_ROOT)/tmp;
 	$(hide) echo "<< unpack $(PRJ_BOOT_IMG) to $(PRJ_BOOT_DIR) done"
 	$(hide) echo ">> check $(PRJ_BOOT_IMG_OUT)/ramdisk/file_contexts ...";  \
