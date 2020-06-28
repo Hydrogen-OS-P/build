@@ -95,7 +95,7 @@ clean-out:
 
 CLEAN_TARGETS += clean-source
 
-CLEAN_SOURCE_REMOVE_TARGETS := $(patsubst %,$(BOARD_DIR)/%,$(filter-out $(notdir $(BOARD_ZIP) $(BOARD_LAST_ZIP) $(THEME_RES)) \
+CLEAN_SOURCE_REMOVE_TARGETS := $(patsubst %,$(BOARD_DIR)/%,$(filter-out $(notdir $(BOARD_ZIP) $(BOARD_LAST_ZIP)) \
                                     timestamp,$(shell if [ -d $(BOARD_DIR) ]; then ls $(BOARD_DIR); fi)))
 .PHONY: clean-source
 clean-source:
@@ -167,6 +167,7 @@ $(call resetPosition,VENDOR_PREBUILT_APPS,$(VENDOR_SYSTEM))
 include $(PORT_BUILD)/prebuilt.mk
 
 ###### get all of the framework resources apks #########
+# add path and find all framework-*.apk
 BOARD_FRAMEWORK_APKS := $(patsubst %,$(BOARD_SYSTEM)/%, \
     $(strip $(sort $(filter framework/%.apk, $(ALL_BOARD_FILES)))))
 
@@ -175,7 +176,6 @@ VENDOR_FRAMEWORK_APKS := $(patsubst %,$(VENDOR_SYSTEM)/%, \
 
 FRAMEWORK_APKS_TARGETS := $(patsubst %,$(OUT_SYSTEM)/%,\
     $(strip $(sort $(filter framework/%.apk, $(ALL_VENDOR_FILES)))))
-
 
 $(BOARD_FRAMEWORK_APKS): $(PREPARE_SOURCE)
 
