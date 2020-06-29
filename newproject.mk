@@ -136,18 +136,18 @@ $(VENDOR_TARGET_ZIP): $(VENDOR_RECOVERY_FSTAB) bootimage
 	$(hide) cp -r $(VENDOR_DIR) $(VENDOR_TARGET_DIR)
 	$(hide) mv $(VENDOR_TARGET_DIR)/system $(VENDOR_TARGET_DIR)/SYSTEM
 	$(hide) if [ -f $(OUT_DIR)/boot.img ]; then cp -r $(OUT_DIR)/boot.img $(VENDOR_TARGET_DIR)/IMAGES/boot.img; fi
-	$(hide) if [ -f $(OUT_OBJ_BOOT)/ramdisk/plat_file_contexts ]; then \
-			cp -r $(OUT_OBJ_BOOT)/ramdisk/plat_file_contexts $(VENDOR_TARGET_DIR)/META/file_contexts; \
+	$(hide) if [ -f $(OUT_OBJ_BOOT)/RAMDISK/plat_file_contexts ]; then \
+			cp $(OUT_OBJ_BOOT)/RAMDISK/plat_file_contexts $(VENDOR_TARGET_DIR)/META/file_contexts; \
 			else \
-		if [ -f $(OUT_OBJ_BOOT)/ramdisk/file_contexts ]; then \
-			cp -r $(OUT_OBJ_BOOT)/ramdisk/file_contexts $(VENDOR_TARGET_DIR)/META/file_contexts; \
+		if [ -f $(OUT_OBJ_BOOT)/RAMDISK/file_contexts ]; then \
+			cp $(OUT_OBJ_BOOT)/RAMDISK/file_contexts $(VENDOR_TARGET_DIR)/META/file_contexts; \
 		fi
 		fi
 	$(hide) if [ -d $(PRJ_ROOT)/ROOT ]; then \
 			rm -rf $(VENDOR_TARGET_DIR)/ROOT; \
 			cp -a $(PRJ_ROOT)/ROOT $(VENDOR_TARGET_DIR); \
 		fi
-	$(hide) if [ -f $(OUT_OBJ_BOOT)/ramdisk/plat_file_contexts  ]; then \
+	$(hide) if [ -f $(OUT_OBJ_BOOT)/RAMDISK/plat_file_contexts  ]; then \
 			echo ">> pack $(VENDOR_TARGET_DIR)/ROOT/file_contexts.bin ..."; \
 			$(SEFCONTEXT_COMPILE_TOOL) -o $(VENDOR_TARGET_DIR)/ROOT/file_contexts.bin $(VENDOR_TARGET_DIR)/ROOT/file_contexts; \
 			rm -r $(VENDOR_TARGET_DIR)/ROOT/file_contexts; \
@@ -194,16 +194,20 @@ update_file_system_config: $(VENDOR_DIR)
 	$(hide) echo "> update file system config info ..."
 	$(hide) if [ ! -d $(OUT_DIR) ]; then mkdir -p $(OUT_DIR); fi
 	$(hide) if [ ! -f $(OUT_DIR)/file_contexts ]; then \
-			if [ -f $(PRJ_BOOT_IMG_OUT)/ramdisk/plat_file_contexts ]; then \
+			if [ -f $(PRJ_BOOT_IMG_OUT)/RAMDISK/plat_file_contexts ]; then \
 				if [ x"$(PRODUCE_IS_AB_UPDATE)" = x"true" ]; then \
-					cp $(PRJ_BOOT_IMG_OUT)/ramdisk/plat_file_contexts $(OUT_DIR)/file_contexts; \
+					cp $(PRJ_ROOT)/ROOT/file_contexts $(OUT_DIR)/file_contexts; \
 				else \
-					cp $(PRJ_BOOT_IMG_OUT)/ramdisk/file_contexts $(OUT_DIR)/file_contexts; \
+					cp $(PRJ_BOOT_IMG_OUT)/RAMDISK/file_contexts $(OUT_DIR)/file_contexts; \
 				fi; \
 			else \
+				cp $(PRJ_BOOT_IMG_OUT)/RAMDISK/file_contexts $(OUT_DIR)/file_contexts >/dev/null 2>&1; \
+				cp $(PRJ_BOOT_IMG_OUT)/RAMDISK/plat_file_contexts $(OUT_DIR)/file_contexts >/dev/null 2>&1; \
+				if [ ! -f $(OUT_DIR)/file_contexts ]; then \
 				echo "get plat_file_contexts from phone ..."; \
 				echo -e "\033[31m If pull failed please add file into out dir and Name it as file_contexts... \033[0m"; \
 				adb pull /plat_file_contexts $(OUT_DIR)/file_contexts; \
+				fi; \
 			fi; \
 		fi;
 	$(hide) if [ -f $(OUT_DIR)/file_contexts ]; then \
