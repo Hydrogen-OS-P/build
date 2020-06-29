@@ -23,8 +23,8 @@ SOURCE_BOOT              := $(BOARD_DIR)/BOOT
 OUT_OBJ_BOOT             := $(OUT_OBJ_DIR)/BOOT
 OUT_BOOT_IMG             := $(OUT_IMAGES)/$(BOOT_IMG)
 
-SOURCE_BOOT_RAMDISK_SERVICEEXT  := $(SOURCE_BOOT)/ramdisk/sbin/serviceext
-OUT_OBJ_BOOT_RAMDISK_SERVICEEXT	:= $(OUT_OBJ_BOOT)/ramdisk/sbin/serviceext
+SOURCE_BOOT_RAMDISK_SERVICEEXT  := $(SOURCE_BOOT)/RAMDISK/sbin/serviceext
+OUT_OBJ_BOOT_RAMDISK_SERVICEEXT	:= $(OUT_OBJ_BOOT)/RAMDISK/sbin/serviceext
 VENDOR_BOOT_KERNEL              := $(VENDOR_BOOT)/kernel
 OUT_OBJ_BOOT_KERNEL             := $(OUT_OBJ_BOOT)/kernel
 
@@ -51,21 +51,21 @@ unpack-boot:
 	$(hide) cp -r $(OUT_OBJ_BOOT) $(PRJ_BOOT_DIR);
 	$(hide) rm -rf $(PRJ_ROOT)/tmp;
 	$(hide) echo "<< unpack $(PRJ_BOOT_IMG) to $(PRJ_BOOT_DIR) done"
-	$(hide) echo ">> check $(PRJ_BOOT_IMG_OUT)/ramdisk/file_contexts ...";  \
-			if [ -f $(PRJ_BOOT_IMG_OUT)/ramdisk/file_contexts ]; then \
-			echo "<< check $(PRJ_BOOT_IMG_OUT)/ramdisk/file_contexts done";  \
+	$(hide) echo ">> check $(PRJ_BOOT_IMG_OUT)/RAMDISK/file_contexts ...";  \
+			if [ -f $(PRJ_BOOT_IMG_OUT)/RAMDISK/file_contexts ]; then \
+			echo "<< check $(PRJ_BOOT_IMG_OUT)/RAMDISK/file_contexts done";  \
 			else \
-			echo "<< $(PRJ_BOOT_IMG_OUT)/ramdisk/file_contexts no found";  \
+			echo "<< $(PRJ_BOOT_IMG_OUT)/RAMDISK/file_contexts no found";  \
 		fi
 # add support Pie 		
-	$(hide) echo ">> check $(PRJ_BOOT_IMG_OUT)/ramdisk/plat_file_contexts ...";  \
-			if [ -f $(PRJ_BOOT_IMG_OUT)/ramdisk/plat_file_contexts ]; then \
-			cp $(PRJ_BOOT_IMG_OUT)/ramdisk/plat_file_contexts $(PRJ_BOOT_IMG_OUT)/ramdisk/file_contexts; \
-			echo "<< check $(PRJ_BOOT_IMG_OUT)/ramdisk/plat_file_contexts done";  \
+	$(hide) echo ">> check $(PRJ_BOOT_IMG_OUT)/RAMDISK/plat_file_contexts ...";  \
+			if [ -f $(PRJ_BOOT_IMG_OUT)/RAMDISK/plat_file_contexts ]; then \
+			cp $(PRJ_BOOT_IMG_OUT)/RAMDISK/plat_file_contexts $(PRJ_BOOT_IMG_OUT)/RAMDISK/file_contexts; \
+			echo "<< check $(PRJ_BOOT_IMG_OUT)/RAMDISK/plat_file_contexts done";  \
 			else \
-			echo "<< $(PRJ_BOOT_IMG_OUT)/ramdisk/plat_file_contexts no found";  \
+			echo "<< $(PRJ_BOOT_IMG_OUT)/RAMDISK/plat_file_contexts no found";  \
 		fi
-	$(hide)	if [ -f $(PRJ_BOOT_IMG_OUT)/ramdisk/file_contexts ]; then \
+	$(hide)	if [ -f $(PRJ_BOOT_IMG_OUT)/RAMDISK/file_contexts ]; then \
 		echo -e "\033[31m Warn: \033[0m file_contexts is existed,plat_file_contexts is not necessary.";  \
 		else \
 		echo -e "\033[31m plat_file_contexts file_contexts no found.Check one of them \033[0m"; \
@@ -103,13 +103,13 @@ prepare_boot_ramdisk:
 	$(hide) mkdir -p $(OUT_OBJ_BOOT);
 	$(hide) cp -r $(PRJ_BOOT_DIR)/* $(OUT_OBJ_BOOT);
 ifneq ($(strip $(PRODUCE_SEPOLICY_INJECT)),false)
-	$(hide) $(SEPOLICY_INJECT) $(OUT_OBJ_BOOT)/ramdisk/sepolicy
+	$(hide) $(SEPOLICY_INJECT) $(OUT_OBJ_BOOT)/RAMDISK/sepolicy
 endif
-	$(hide) if [ -f $(OUT_OBJ_BOOT)/ramdisk/file_contexts.bin ]; then \
-			echo ">> pack $(OUT_OBJ_BOOT)/ramdisk/file_contexts.bin ..."; \
-			$(SEFCONTEXT_COMPILE_TOOL) -o $(OUT_OBJ_BOOT)/ramdisk/file_contexts.bin $(OUT_OBJ_BOOT)/ramdisk/file_contexts; \
-			rm -r $(OUT_OBJ_BOOT)/ramdisk/file_contexts; \
-			echo "<< pack $(OUT_OBJ_BOOT)/ramdisk/file_contexts.bin done"; \
+	$(hide) if [ -f $(OUT_OBJ_BOOT)/RAMDISK/file_contexts.bin ]; then \
+			echo ">> pack $(OUT_OBJ_BOOT)/RAMDISK/file_contexts.bin ..."; \
+			$(SEFCONTEXT_COMPILE_TOOL) -o $(OUT_OBJ_BOOT)/RAMDISK/file_contexts.bin $(OUT_OBJ_BOOT)/RAMDISK/file_contexts; \
+			rm -r $(OUT_OBJ_BOOT)/RAMDISK/file_contexts; \
+			echo "<< pack $(OUT_OBJ_BOOT)/RAMDISK/file_contexts.bin done"; \
 		fi
 	$(hide) $(foreach prebuilt_pair,$(BOOT_PREBUILT_FILES),\
 			$(eval src_file := $(call word-colon,1,$(prebuilt_pair)))\
@@ -140,12 +140,12 @@ OUT_OBJ_RECOVERY        := $(OUT_OBJ_DIR)/RECOVERY
 OUT_RECOVERY_IMG        := $(OUT_IMAGES)/$(RECOVERY_IMG)
 
 VENDOR_RECOVERY_KERNEL       := $(VENDOR_RECOVERY)/kernel
-VENDOR_RECOVERY_RAMDISK	     := $(VENDOR_RECOVERY)/ramdisk
+VENDOR_RECOVERY_RAMDISK	     := $(VENDOR_RECOVERY)/RAMDISK
 VENDOR_RECOVERY_FSTAB        := $(VENDOR_RECOVERY_RAMDISK)/etc/recovery.fstab
 VENDOR_RECOVERY_DEFAULT_PROP := $(VENDOR_RECOVERY_RAMDISK)/default.prop
-SOURCE_RECOVERY_RAMDISK      := $(SOURCE_RECOVERY)/ramdisk
+SOURCE_RECOVERY_RAMDISK      := $(SOURCE_RECOVERY)/RAMDISK
 OUT_OBJ_RECOVERY_KERNEL      := $(OUT_OBJ_RECOVERY)/kernel
-OUT_OBJ_RECOVERY_RAMDISK     := $(OUT_OBJ_RECOVERY)/ramdisk
+OUT_OBJ_RECOVERY_RAMDISK     := $(OUT_OBJ_RECOVERY)/RAMDISK
 OUT_OBJ_RECOVERY_FSTAB       := $(OUT_OBJ_RECOVERY_RAMDISK)/etc/recovery.fstab
 OUT_OBJ_RECOVERY_DEFAULT_PROP:= $(OUT_OBJ_RECOVERY_RAMDISK)/default.prop
 
@@ -170,6 +170,7 @@ endif
 	$(hide) mkdir -p $(OUT_OBJ_RECOVERY)
 	$(hide) $(UNPACK_BOOT_SH) $(PRJ_RECOVERY_IMG) $(PRJ_RECUNPACK)
 	$(hide) cp -r $(PRJ_RECUNPACK)/* $(OUT_OBJ_RECOVERY)
+	$(hide) rm -rf $(PRJ_RECUNPACK)
 ifeq ($(PRODUCE_IS_AB_UPDATE),true)
 	$(hide) rm $(PRJ_RECOVERY_IMG)
 endif
@@ -205,8 +206,8 @@ prepare_recovery_ramdisk:
 	$(hide) rm -rf $(OUT_OBJ_RECOVERY)
 	$(hide) mkdir -p $(OUT_OBJ_RECOVERY);
 	$(hide) cp -r $(VENDOR_BOOT)/* $(OUT_OBJ_RECOVERY);
-	$(hide) rm -rf $(OUT_OBJ_RECOVERY)/ramdisk/;
-	$(hide) cp -r $(SOURCE_RECOVERY)/ramdisk/ $(OUT_OBJ_RECOVERY);
+	$(hide) rm -rf $(OUT_OBJ_RECOVERY)/RAMDISK/;
+	$(hide) cp -r $(SOURCE_RECOVERY)/RAMDISK/ $(OUT_OBJ_RECOVERY);
 	$(hide) $(foreach prebuilt_pair,$(RECOVERY_PREBUILT_FILES),\
 				$(eval src_file := $(call word-colon,1,$(prebuilt_pair)))\
 				$(eval dst_file := $(call word-colon,2,$(prebuilt_pair)))\
