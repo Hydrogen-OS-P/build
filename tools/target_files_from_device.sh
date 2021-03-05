@@ -256,7 +256,7 @@ function unpack_systemimg {
         sudo umount $tmpMnt
         sudo chmod 777 -R $outdir
 
-        rm -rf $tmpMnt
+        sudo rm -rf $tmpMnt
 
         echo ">>> success unpack $systemimg to $outdir"
         return 0
