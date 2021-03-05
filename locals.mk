@@ -24,7 +24,7 @@ ifeq ($(strip $(ANDROID_SDK_VERSION)),)
     ANDROID_SDK_VERSION := 15
 endif
 
-ROMER := $(strip $(patsubst ro.flyme.romer=%,%,$(filter ro.flyme.romer=%,$(override_property))))
+ROMER := $(strip $(patsubst ro.exTHmUI.romer=%,%,$(filter ro.exTHmUI.romer=%,$(override_property))))
 
 # the version of the target
 # which would be set to build.prop by $(MAKE_BUILD_PROP)
