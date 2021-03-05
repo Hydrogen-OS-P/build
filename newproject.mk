@@ -206,7 +206,7 @@ update_file_system_config: $(VENDOR_DIR)
 				if [ ! -f $(OUT_DIR)/file_contexts ]; then \
 				echo "get plat_file_contexts from phone ..."; \
 				echo -e "\033[31m If pull failed please add file into out dir and Name it as file_contexts... \033[0m"; \
-				adb pull /plat_file_contexts $(OUT_DIR)/file_contexts; \
+				adb pull /etc/selinux/plat_file_contexts $(OUT_DIR)/file_contexts; \
 				fi; \
 			fi; \
 		fi;
